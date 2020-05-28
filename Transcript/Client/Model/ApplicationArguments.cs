@@ -38,18 +38,22 @@ namespace Transcript.Client.Model
         [EnumeratedValueArgument(typeof(string), 'e', "encoding", AllowedValues =  Constants.Encodings, Description = "Audio file encoding, if not provided \"unspecified\" will be used")]
         public string Encoding { get; set; }
 
-
         public bool IsValidPasswordProvided => !string.IsNullOrWhiteSpace(Password) && Password.Length >= 8;
+
         public string PasswordError => "--password must be provided and be at least eight (8) characters long";
 
         public string Key => "Google.key";
+
         public bool KeyExists => File.Exists(Key);
+
         public string KeyError => $"{Key} file not found, create or update one using --key switch";
 
         public bool FileProvided => !string.IsNullOrWhiteSpace(FilePath);
+
         public string FileError => $"--file must be provided";
 
         public bool StorageUrlProvided => !string.IsNullOrWhiteSpace(StorageUrl);
+
         public string StorageUrlError => $"--gs must be provided";
     }
 }
