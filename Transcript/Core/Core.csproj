@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Transcript.Core</AssemblyName>
+    <RootNamespace>Transcript.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineArgumentsParser" Version="3.0.20" />
+  </ItemGroup>
+
+</Project>
