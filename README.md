@@ -35,7 +35,7 @@ You can provide source file(s) from local machine using `--file` or from your Go
 `Transcript.exe --password 12345678 --file my-audio*.wav`<br>
 `Transcript.exe --password 12345678 --url gs://my-google-bucket/my-audio*.wav`
 
-All transcriptions will be stored in loca `result` folder when finished. **Note that when using Google Storage**, you need to provide storage access rights to your Service Account. Storage access right can be granted when you first create your Service Account or added to it later on.
+All transcriptions will be stored in local `result` folder when finished. **Note that when using Google Storage**, you need to provide storage access rights to your Service Account. Storage access right can be granted when you first create your Service Account or added to it later on.
 
 ### Providing additional parameters
 
