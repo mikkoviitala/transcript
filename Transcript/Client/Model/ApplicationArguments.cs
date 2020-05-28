@@ -11,6 +11,7 @@ namespace Transcript.Client.Model
     [DistinctGroupsCertification("file", "url")]
     public class ApplicationArguments
     {
+        private const string StoragePrefix = "gs://";
         private string _storageUrl;
 
         [SwitchArgument('k', "key", false, Description = "Create or update internal API Key from Google credentials JSON file, --password and source --file must be provided. See https://cloud.google.com/docs/authentication/production#creating_a_service_account on how to obtain the source file.")]
@@ -25,7 +26,7 @@ namespace Transcript.Client.Model
         [ValueArgument(typeof(string), 'u', "url", Description = "Google Storage URL")]
         public string StorageUrl
         {
-            get => _storageUrl.StartsWith("gs://") ? _storageUrl : $"gs://{_storageUrl}";
+            get => _storageUrl.StartsWith(StoragePrefix) ? _storageUrl : $"{StoragePrefix}{_storageUrl}";
             set => _storageUrl = value;
         }
 
