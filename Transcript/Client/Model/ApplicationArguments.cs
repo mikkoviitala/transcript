@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using CommandLineParser.Arguments;
 using CommandLineParser.Validation;
 using Transcript.Core;
