@@ -12,7 +12,7 @@ If you don't already have a *Google Cloud Platform Project* and related *Google 
 
 At the time of writing, using said file is only authentication method supported by Google Speech API.
 
-But you'll have a file laying around on your computer that contains your private key and such. And that's not fun at all!
+But then you'll have a file laying around on your computer that contains your private key and such. And that's not fun at all!
 
 And because it's not fun, you'll need to create a encrypted key out of the file you just downloaded. This is, again, a simple process and you only need to provide one command and you are ready to go! Source file will be deleted after encryption if you don't explicitly prevent it.
 
