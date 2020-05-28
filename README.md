@@ -58,7 +58,9 @@ Result of that command would be
 
 >[98.03%] We the people of the United States in order to form a more perfect union establish justice insure domestic tranquility provide for the common defense.
 
+### Is it free?
 
+When you first sign up to Google Cloud you'll enter a Free Tier and get some "virtual cash" to spend in any way you want. You won't be billed before you explicitly turn billing on from the management comsole. If your access to API is restricted for any reason, not exclusively related to billing, Transcribe will simply return an error.
 
 
 
