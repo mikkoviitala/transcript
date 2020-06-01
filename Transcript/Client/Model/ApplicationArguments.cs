@@ -5,7 +5,6 @@ using CommandLineParser.Validation;
 using Google.Cloud.Speech.V1;
 using Transcript.Api.Model;
 using Transcript.Core;
-using Transcript.Core.Service;
 
 namespace Transcript.Client.Model
 {
