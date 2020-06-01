@@ -20,18 +20,18 @@ namespace Transcript.Api
     {
         private const string GoogleEnv = "GOOGLE_APPLICATION_CREDENTIALS";
 
-        public List<Task> Transcribe(Options options)
+        public List<Task<Result>> Transcribe(Options options)
         {
             Environment.SetEnvironmentVariable(GoogleEnv, options.KeyPath, EnvironmentVariableTarget.Process);
 
-            var tasks = new List<Task>();
+            var tasks = new List<Task<Result>>();
 
             var settings = new RecognitionConfig
             {
                 EnableSeparateRecognitionPerChannel = true,
                 EnableAutomaticPunctuation = true,
                 LanguageCode = options.LanguageCode,
-                Encoding = options.GoogleEncoding
+                Encoding = options.Encoding
             };
 
             if (options.SampleRate.HasValue)
@@ -40,20 +40,29 @@ namespace Transcript.Api
             var audios = FromGoogleStorage(options) ? GetStorageFiles(options) : GetLocalFiles(options);
             audios.ForEach(audio =>
             {
-                Task task = Task.Factory.StartNew(() =>
+                var task = Task<Result>.Factory.StartNew(() =>
                 {
-                    File.WriteAllText(audio.OutputFile, string.Empty);
-
-                    var speech = SpeechClient.Create();
-                    var longOperation = speech.LongRunningRecognize(settings, audio.RecognitionAudio);
-                    longOperation = longOperation.PollUntilCompleted();
-
-                    var response = longOperation.Result;
-                    foreach (var result in response.Results)
+                    try
                     {
-                        foreach (var alternative in result.Alternatives)
-                            File.AppendAllText(audio.OutputFile, FormatLine(alternative));
+                        File.WriteAllText(audio.OutputFile, string.Empty);
+
+                        var speech = SpeechClient.Create();
+                        var longOperation = speech.LongRunningRecognize(settings, audio.RecognitionAudio);
+                        longOperation = longOperation.PollUntilCompleted();
+
+                        var response = longOperation.Result;
+                        foreach (var result in response.Results)
+                        {
+                            foreach (var alternative in result.Alternatives)
+                                File.AppendAllText(audio.OutputFile, FormatLine(alternative));
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        return new Result(audio.InputFile, false, e.Message);
+                    }
+
+                    return new Result(audio.InputFile, true);
                 }, TaskCreationOptions.LongRunning);
                 tasks.Add(task);
             });
@@ -69,7 +78,7 @@ namespace Transcript.Api
 
             string[] fileNames = !name.Contains("*") ? new[] {fullFilePath} : Directory.GetFiles(fullPath, name).ToArray();
 
-            return fileNames.Select(fileName => new Audio(RecognitionAudio.FromFile(fileName), GetOutputFile(options, fileName))).ToList();
+            return fileNames.Select(fileName => new Audio(fileName, GetOutputFile(options, fileName), RecognitionAudio.FromFile(fileName))).ToList();
         }
 
         private List<Audio> GetStorageFiles(Options options)
@@ -83,18 +92,22 @@ namespace Transcript.Api
             string name = parts[parts.Length - 1];
 
             if (!name.Contains("*"))
-                return new List<Audio> { new Audio(RecognitionAudio.FromStorageUri(options.Source), GetOutputFile(options, name)) };
+                return new List<Audio>
+                {
+                    new Audio(options.Source, GetOutputFile(options, name), RecognitionAudio.FromStorageUri(options.Source))
+                };
 
             var storageClient = StorageClient.Create(GoogleCredential.FromFile(options.KeyPath));
             string[] fileNames = storageClient.ListObjects(bucket).Select(f => f.Name).ToArray();
 
             WildCard wildCard = new WildCard(name, RegexOptions.IgnoreCase);
             return fileNames
-                .Where(fileName => {
-                    var x = !fileName.EndsWith("/") && wildCard.IsMatch(fileName);
-                    return x;
-                })
-                .Select(fileName => new Audio(RecognitionAudio.FromStorageUri($"gs://{bucket}/{fileName}"), GetOutputFile(options, fileName))).ToList();
+                .Where(fileName => !fileName.EndsWith("/") && wildCard.IsMatch(fileName))
+                .Select(fileName =>
+                {
+                    string source = $"gs://{bucket}/{fileName}";
+                    return new Audio(source, GetOutputFile(options, fileName), RecognitionAudio.FromStorageUri(source));
+                }).ToList();
         }
 
         private bool FromGoogleStorage(Options options)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Transcript.Api;
 using Transcript.Api.Model;
@@ -65,31 +67,16 @@ namespace Transcript.Client.Service
 
         private void SpeechToText(ApplicationArguments appArgs)
         {
-            string tempKeyPath = Path.Combine(Directory.GetCurrentDirectory(), $"{appArgs.Key}.tmp");
-            string decrypted = DecryptKey(appArgs);
+            var options = ApplicationArguments.ToOptions(appArgs);
 
-            void Cleanup(object sender, UnhandledExceptionEventArgs e) => File.Delete(tempKeyPath);
+            void Cleanup(object sender, UnhandledExceptionEventArgs e) => File.Delete(options.KeyPath);
             AppDomain.CurrentDomain.UnhandledException += Cleanup;
 
-            File.WriteAllText(tempKeyPath, decrypted);
+            string decrypted = DecryptKey(appArgs);
+            File.WriteAllText(options.KeyPath, decrypted);
 
-            string source = appArgs.FileProvided ?
-                appArgs.FilePath :
-                appArgs.StorageUrl;
-            string destinationPath = Path.Combine(Directory.GetCurrentDirectory(), "result");
-
-            if (!Directory.Exists(destinationPath))
-                Directory.CreateDirectory(destinationPath);
-
-            var options = new Options()
-            {
-                KeyPath = tempKeyPath,
-                Source = source,
-                LanguageCode = appArgs.LanguageCode ?? Constants.DefaultLanguageCode,
-                SampleRate = !string.IsNullOrWhiteSpace(appArgs.SampleRate) ? int.Parse(appArgs.SampleRate) : (int?) null,
-                Encoding = !string.IsNullOrWhiteSpace(appArgs.Encoding) ? appArgs.Encoding : Constants.DefaultEncoding,
-                Destination = destinationPath
-            };
+            if (!Directory.Exists(options.Destination))
+                Directory.CreateDirectory(options.Destination);
 
             Logger.Log(string.Empty);
             Logger.Log($"Processing audio files {options}");
@@ -102,8 +89,10 @@ namespace Transcript.Client.Service
 
             ProgressIndicator.Completed();
 
+            ReportResults(tasks);
+
             Logger.Log(string.Empty);
-            Logger.Log($"Finished, transcripts saved in \"{options.Destination}\"");
+            Logger.Log($"Transcripts saved in \"{options.Destination}\"");
             Logger.Log(string.Empty);
 
             AppDomain.CurrentDomain.UnhandledException -= Cleanup;
@@ -156,6 +145,25 @@ namespace Transcript.Client.Service
             }
 
             return decrypted;
+        }
+
+        private void ReportResults(List<Task<Result>> tasks)
+        {
+            var success = tasks.Where(t => t.Result.Success).ToList();
+            var failed = tasks.Where(t => !t.Result.Success).ToList();
+
+            if (success.Any())
+                Logger.Log($"Success {success.Count}/{tasks.Capacity}");
+            if (failed.Any())
+            {
+                Logger.Log($"Failed {failed.Count}/{tasks.Capacity}");
+                failed.ForEach(t =>
+                {
+                    Logger.Log(string.Empty);
+                    Logger.Log(t.Result.InputFile);
+                    Logger.Log(t.Result.Message);
+                });
+            }
         }
 
         private void Exit(string message = null)

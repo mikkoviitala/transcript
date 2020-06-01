@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Client": {
-      "commandName": "Project",
-      "commandLineArgs": " --key ey2.json --password 12345678"
+      "commandName": "Project"
     }
   }
 }

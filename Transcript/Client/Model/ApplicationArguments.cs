@@ -1,7 +1,11 @@
+using System;
 using System.IO;
 using CommandLineParser.Arguments;
 using CommandLineParser.Validation;
+using Google.Cloud.Speech.V1;
+using Transcript.Api.Model;
 using Transcript.Core;
+using Transcript.Core.Service;
 
 namespace Transcript.Client.Model
 {
@@ -56,5 +60,25 @@ namespace Transcript.Client.Model
         public bool StorageUrlProvided => !string.IsNullOrWhiteSpace(StorageUrl);
 
         public string StorageUrlError => $"--gs must be provided";
+
+        public static Options ToOptions(ApplicationArguments appArgs)
+        {
+            var options = new Options()
+            {
+                KeyPath = Path.Combine(Directory.GetCurrentDirectory(), $"{appArgs.Key}.tmp"),
+                Source = appArgs.FileProvided ? appArgs.FilePath : appArgs.StorageUrl,
+                LanguageCode = appArgs.LanguageCode ?? Constants.DefaultLanguageCode,
+                SampleRate = !string.IsNullOrWhiteSpace(appArgs.SampleRate) ? int.Parse(appArgs.SampleRate) : (int?) null,
+                Destination = Path.Combine(Directory.GetCurrentDirectory(), "result")
+            };
+
+            string encoding = !string.IsNullOrWhiteSpace(appArgs.Encoding)
+                ? appArgs.Encoding
+                : Constants.DefaultEncoding;
+            Enum.TryParse(encoding, out RecognitionConfig.Types.AudioEncoding parsed);
+            options.Encoding = parsed;
+
+            return options;
+        }
     }
 }

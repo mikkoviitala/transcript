@@ -7,13 +7,17 @@ namespace Transcript.Api.Model
     /// </summary>
     internal class Audio
     {
-        public Audio(RecognitionAudio recognitionAudio, string outputFile)
+        public Audio(string inputFile, string outputFile, RecognitionAudio recognitionAudio)
         {
-            RecognitionAudio = recognitionAudio;
+            InputFile = inputFile;
             OutputFile = outputFile;
+            RecognitionAudio = recognitionAudio;
         }
 
-        public RecognitionAudio RecognitionAudio { get; set; }
+        public string InputFile { get; set; }
+
         public string OutputFile { get; set; }
+
+        public RecognitionAudio RecognitionAudio { get; set; }
     }
 }

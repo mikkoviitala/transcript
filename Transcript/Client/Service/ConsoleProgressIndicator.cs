@@ -38,6 +38,8 @@ namespace Transcript.Client.Service
         public void Completed()
         {
             _tokenSource.Cancel();
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.WriteLine($"Finished...     ");
         }
     }
 }

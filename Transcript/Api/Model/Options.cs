@@ -1,6 +1,5 @@
 ﻿using System;
 using Google.Cloud.Speech.V1;
-using Transcript.Core.Service;
 
 namespace Transcript.Api.Model
 {
@@ -9,23 +8,11 @@ namespace Transcript.Api.Model
     /// </summary>
     public class Options
     {
-        private static readonly ParameterMapper Mapper = new ParameterMapper();
-
         public string KeyPath { get; set; }
 
         public string Source { get; set; }
 
-        public string Encoding { get; set; }
-
-        public RecognitionConfig.Types.AudioEncoding GoogleEncoding
-        {
-            get
-            {
-                string encoding = Mapper.ToGoogleEncoding(Encoding);
-                Enum.TryParse(encoding, out RecognitionConfig.Types.AudioEncoding parsed);
-                return parsed;
-            }
-        }
+        public RecognitionConfig.Types.AudioEncoding Encoding { get; set; }
 
         public int? SampleRate { get; set; }
 
@@ -35,7 +22,7 @@ namespace Transcript.Api.Model
 
         public override string ToString()
         {
-            return $"Source:{Source}, Language:{LanguageCode}, Encoding:{GoogleEncoding}, SampleRate:{(SampleRate.HasValue ? SampleRate.Value.ToString() : "Omitted")}";
+            return $"Source:{Source}, Language:{LanguageCode}, Encoding:{Encoding}, SampleRate:{(SampleRate.HasValue ? SampleRate.Value.ToString() : "Omitted")}";
         }
     }
 }
