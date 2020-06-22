@@ -60,7 +60,11 @@ Result of that command would be
 
 ### Is it free?
 
-When you first sign up to Google Cloud you'll enter a Free Tier and get some "virtual cash" to spend in any way you want. You won't be billed before you explicitly turn billing on from the management console. If your access to API is restricted for any reason, not exclusively related to billing, Transcribe will simply return an error message describing the problem.
+No, it's not free but it's not expensive either. Further more, when you first sign up to Google Cloud you'll enter a Free Tier and get some "virtual cash" to spend in any way you want. You won't be billed before you explicitly turn billing on from the management console. If your access to API is restricted for any reason, not exclusively related to billing, Transcribe will simply return an error message describing the problem.
+
+### Anyone actually using this, finding any value?
+
+That would be yes, [Admicom Finland](https://www.admicom.fi).
 
 
 
