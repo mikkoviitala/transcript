@@ -153,10 +153,10 @@ namespace Transcript.Client.Service
             var failed = tasks.Where(t => !t.Result.Success).ToList();
 
             if (success.Any())
-                Logger.Log($"Success {success.Count}/{tasks.Capacity}");
+                Logger.Log($"Success {success.Count}/{tasks.Count}");
             if (failed.Any())
             {
-                Logger.Log($"Failed {failed.Count}/{tasks.Capacity}");
+                Logger.Log($"Failed {failed.Count}/{tasks.Count}");
                 failed.ForEach(t =>
                 {
                     Logger.Log(string.Empty);
