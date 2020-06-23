@@ -48,7 +48,7 @@ If needed, you can explicitly set `language code`, `encoding` and `sample rate` 
 There's an example audio provided with the project, in project root under `TestAudio`, called `preamble10.wav`.
 Here's how one would go about transcibing that.
 
-`Transcript.exe --password 12345678 --file preamble10.wav`
+`Transcript.exe -p 12345678 -f preamble10.wav`
 
 Or in more detail
 
@@ -57,6 +57,8 @@ Or in more detail
 Result of that command would be 
 
 >[98.03%] We the people of the United States in order to form a more perfect union establish justice insure domestic tranquility provide for the common defense.
+
+![](readme-images/transcript.gif)
 
 ### Is it free?
 
