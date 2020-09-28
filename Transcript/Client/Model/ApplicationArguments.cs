@@ -66,7 +66,7 @@ namespace Transcript.Client.Model
             {
                 KeyPath = Path.Combine(Directory.GetCurrentDirectory(), $"{appArgs.Key}.tmp"),
                 Source = appArgs.FileProvided ? appArgs.FilePath : appArgs.StorageUrl,
-                LanguageCode = appArgs.LanguageCode ?? Constants.DefaultLanguageCode,
+                LanguageCode = GetLanguageCodeWithLocale(appArgs.LanguageCode ?? Constants.DefaultLanguageCode),
                 SampleRate = !string.IsNullOrWhiteSpace(appArgs.SampleRate) ? int.Parse(appArgs.SampleRate) : (int?) null,
                 Destination = Path.Combine(Directory.GetCurrentDirectory(), "result")
             };
@@ -78,6 +78,19 @@ namespace Transcript.Client.Model
             options.Encoding = parsed;
 
             return options;
+        }
+
+        private static string GetLanguageCodeWithLocale(string languageCode)
+        {
+            switch (languageCode)
+            {
+                case "en":
+                    return $"{languageCode}-US";
+                case "fi":
+                    return $"{languageCode}-FI";
+                default:
+                    throw new ArgumentException($"Unsupported language code \"{languageCode}\"");
+            }
         }
     }
 }
