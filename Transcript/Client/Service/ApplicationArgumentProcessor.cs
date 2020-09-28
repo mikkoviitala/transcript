@@ -67,6 +67,9 @@ namespace Transcript.Client.Service
 
         private void SpeechToText(ApplicationArguments appArgs)
         {
+            Logger.Log(string.Empty);
+            Logger.Log($"*** {VersionService.Version} ***");
+
             var options = ApplicationArguments.ToOptions(appArgs);
 
             void Cleanup(object sender, UnhandledExceptionEventArgs e) => File.Delete(options.KeyPath);
@@ -78,7 +81,6 @@ namespace Transcript.Client.Service
             if (!Directory.Exists(options.Destination))
                 Directory.CreateDirectory(options.Destination);
 
-            Logger.Log(string.Empty);
             Logger.Log($"Processing audio files {options}");
 
             ProgressIndicator.Busy();
