@@ -3,14 +3,55 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Gui"
+        xmlns:bh="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:Gui.Behaviors"
         xmlns:vm="clr-namespace:Gui.ViewModel"
+        xmlns:local="clr-namespace:Gui"
         mc:Ignorable="d"
+        SizeToContent="WidthAndHeight"
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>
     <Grid>
-        <TextBlock Text="{Binding Text}"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding Version}"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="Language:" />
+            <ComboBox
+                IsEditable="False"
+                ItemsSource="{Binding Languages}"
+                SelectedValue="{Binding Language}"
+                DisplayMemberPath="Value"
+                Width="110"
+                Height="22"/>
+
+            <TextBlock Text="Encoding:" />
+            <ComboBox
+                IsEditable="False"
+                ItemsSource="{Binding Encodings}"
+                SelectedValue="{Binding Encoding}"
+                DisplayMemberPath="Value"
+                Width="110"
+                Height="22"/>
+
+            <TextBlock Text="Sample rate:"/>
+            <TextBox
+                MaxLength="5"
+                Width="80"
+                Height="22">
+                <bh:Interaction.Behaviors>
+                    <behaviors:DigitsOnlyInputBehavior />
+                </bh:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
+
     </Grid>
 </Window>
